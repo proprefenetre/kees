@@ -117,7 +117,8 @@ def get_parser():
                         help='number of translations')
     return parser
 
-
+# TODO: turn this into a separate file, 
+# (cf. https://github.com/Antrikshy/ignr.py/)
 def run():
     p = get_parser()
     args = vars(p.parse_args())
