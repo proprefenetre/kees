@@ -9,6 +9,7 @@ from urllib.request import urlopen, Request
 from requests.exceptions import HTTPError, ConnectionError, SSLError
 from urllib.parse import quote
 
+
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{source}/{target}/{word}'
 LANGUAGES = ['nl', 'NL', 'en', 'EN', 'de', 'DE', 'fr', 'FR', 'es', 'ES']
 
@@ -59,8 +60,6 @@ def _process(trs):
     for t in trs:
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
-        # normalized = unicodedata.normalize('NFC', subbed)
-        # unescaped = unescape(subbed)
         result.append(subbed)
     return result
 
@@ -74,23 +73,24 @@ def _parse_elements(args):
 def english_motherfucker(args):
     args['word'] = quote(' '.join(args['word']).strip())
     args['source'] = 'NL'
+
     trs = list(_parse_elements(args))
-    
+
     if not args['target'] in LANGUAGES:
-        print('{} - {} not available'.format(args['source'], args['target']))
-        return -1
+        raise ValueError('{} - {} not available'.format(args['source'],
+                                                        args['target']))
 
     if args['sort']:
         trs.sort()
 
-    print('{}:'.format(args['word']))
-    # if args['num_translations']:
-    #     num = args['num_translations']
-    #     for word in trs[:num]:
-    #         print('{:<5}{:<10}'.format(' ', word))
-    # else:
-    for word in trs:
-        print('{:<5}{:<10}'.format(' ', word))
+    print('{}: ({} translations)'.format(args['word'], len(trs)))
+    num = args.get('num_translations', len(trs))
+    for idx, word in enumerate(trs):
+        pad = 2 if idx+1 < 10 else 3
+        print('{:.<{}} {:<10}'.format(idx+1, pad, word))
+        if idx+1 == num:
+            break
+    print()
 
 
 def get_parser():
@@ -102,15 +102,14 @@ def get_parser():
                         help='sort translations alphabetically')
     parser.add_argument('-t', '--target', type=str, default='EN',
                         help='target language (EN, DE, FR, SP; default: EN)')
-    # parser.add_argument('-n', '--num-translations', type=int, default=-1,
-    #                     help='number of translations (default: 1)')
+    parser.add_argument('-n', '--num-translations', type=int,
+                        help='number of translations')
     return parser
 
 
 def run():
     p = get_parser()
     args = vars(p.parse_args())
-
     english_motherfucker(args)
 
 if __name__ == "__main__":
