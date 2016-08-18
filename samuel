@@ -1,73 +1,120 @@
-import argparse
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# from pyquery import PyQuery as pq
-from bs4 import BeautifulSoup
-import requests
+import argparse
+from bs4 import BeautifulSoup 
+from re import sub
+from urllib.request import urlopen, Request
+# import requests
 from requests.exceptions import HTTPError, ConnectionError, SSLError
 from urllib.parse import quote
 
-DICT_URL = 'http://www.mijnwoordenboek.nl/vertaal/{source}/{target}/{word}'
+SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{source}/{target}/{word}'
 LANGUAGES = ['nl', 'NL', 'en', 'EN', 'de', 'DE', 'fr', 'FR', 'es', 'ES']
+
+USER_AGENT = {'User-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) \
+              Gecko/20100101 Firefox/48.0'}
+
+TARGET_DIV = '.span8 > div:nth-of-type(1)'
+FONT_STYLE = 'color:navy;font-size:10pt'
 
 
 def _get_response(url):
     try:
-        return requests.get(url)
+        # r = requests.get(url, headers=USER_AGENT)
+        # r.encoding = 'utf-8'
+        # return r.text
+        return urlopen(Request(url, headers=USER_AGENT))
     except (HTTPError, ConnectionError, SSLError) as e:
         raise e
 
 
-def _get_elements(args):
-    response = _get_response(DICT_URL.format_map(args)).text
-    # html = pq(response)
+def _get_soup(args):
+    response = _get_response(SEARCH_URL.format_map(args))
+    # with open('karig.html', 'r') as f:
+        # response = f
     return BeautifulSoup(response, 'lxml')
 
 
+def _get_translations(soup):
+    div = soup.select(TARGET_DIV + '> font') 
+    return [word for group in [elem.text.split(',') for elem in div
+            if FONT_STYLE in elem['style']] for word in group]
+
+
+def _get_other_sources(soup):
+    tables = soup.select(TARGET_DIV + '> table')
+    other_sources = []
+    for t in tables:
+        if t.get('border', None) is not None:
+            for td in t('td'):
+                if td.get('style', None) is not None:
+                    other_sources.extend([w for w in
+                                          td.text.split(';')])
+    return other_sources
+
+
+def _process(trs):
+    result = []
+    for t in trs:
+        stripped = t.strip()
+        subbed = sub(r'\s+[\(].*[\)]', '', stripped)
+        # normalized = unicodedata.normalize('NFC', subbed)
+        # unescaped = unescape(subbed)
+        result.append(subbed)
+    return result
+
+
 def _parse_elements(args):
-    target_div = '.span8 > div:nth-of-type(1)'
-    font_style = 'color:navy;font-size:10pt'
-
-    soup = _get_elements(args)
-    div = soup.select(target_div + '> font')
-    return [elem.text.split(',') for elem in div if font_style in elem['style']]
-    # tables = soup.select(target_div + '> table')
-    # other_translations = []
-    # for t in tables:
-    #     if t.get('border', None) is not None:
-    #         for td in t('td'):
-    #             if td.get('style', None) is not None:
-    #                 other_translations.extend([w.strip() for w in
-    #                                            td.text.split(';')])
+    soup = _get_soup(args)   
+    translations = _process(_get_translations(soup) + _get_other_sources(soup))
+    return set(translations)
 
 
-def emf(args):
+def english_motherfucker(args):
     args['word'] = quote(' '.join(args['word']).strip())
-    trs = _parse_elements(args)
-    if args['num_translations'] > 1:
-        return trs[:args['num_translations']+1]
-    else:
-        return trs[0]
+    args['source'] = 'NL'
+    trs = list(_parse_elements(args))
+    
+    if not args['target'] in LANGUAGES:
+        print('{} - {} not available'.format(args['source'], args['target']))
+        return -1
+
+    if args['sort']:
+        trs.sort()
+
+    print('{}:'.format(args['word']))
+    # if args['num_translations']:
+    #     num = args['num_translations']
+    #     for word in trs[:num]:
+    #         print('{:<5}{:<10}'.format(' ', word))
+    # else:
+    for word in trs[1:]:
+        print('{:<5}{:<10}'.format(' ', word))
+
 
 
 def get_parser():
-    parser = argparse.ArgumentParser(description='find the English \
-                                     translation of a word')
+    parser = argparse.ArgumentParser(description='English, motherfucker! \
+                                     Do you speak it?!')
     parser.add_argument('word', metavar='WORD', type=str, nargs='+',
                         help='word to be translated')
-    parser.add_argument('-s', '--source', type=str, default='NL',
-                        help='source language (default: NL)')
+    parser.add_argument('-s', '--sort', action='store_true',
+                        help='sort translations alphabetically')
     parser.add_argument('-t', '--target', type=str, default='EN',
-                        help='source language (default: EN)')
-    parser.add_argument('-n', '--num-translations', type=int, default=1,
-                        help='number of translations (default: 1)')
+                        help='target language (EN, DE, FR, SP; default: EN)')
+    # parser.add_argument('-n', '--num-translations', type=int, default=-1,
+    #                     help='number of translations (default: 1)')
     return parser
 
 
 def run():
     p = get_parser()
     args = vars(p.parse_args())
-    if all([args['source'] in LANGUAGES, args['target'] in LANGUAGES]):
-        print(emf(args))
+
+    english_motherfucker(args)
 
 if __name__ == "__main__":
     run()
+
+# vim: ft=python
