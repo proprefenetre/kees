@@ -89,9 +89,8 @@ def english_motherfucker(args):
     #     for word in trs[:num]:
     #         print('{:<5}{:<10}'.format(' ', word))
     # else:
-    for word in trs[1:]:
+    for word in trs:
         print('{:<5}{:<10}'.format(' ', word))
-
 
 
 def get_parser():
