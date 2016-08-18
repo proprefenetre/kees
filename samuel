@@ -45,8 +45,9 @@ def _get_other_sources(soup):
                                           td.text.split(';')])
     return other_sources
 
-# TODO: simplify 
-def uniek(words):
+# TODO: simplify
+def _get_uniques(words):
+    """ remove translation if the same translation occurs with a determiner """
     words = [w.split() for w in words]
     det = []
     no_det = []
@@ -70,7 +71,7 @@ def _process(trs):
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
         result.append(subbed)
-    return uniek(result)
+    return _get_uniques(result)
 
 
 def _parse_elements(args):
@@ -102,6 +103,7 @@ def english_motherfucker(args):
     print()
 
 
+# TODO: add LANG - NL translation option
 def get_parser():
     parser = argparse.ArgumentParser(description='English, motherfucker! \
                                      Do you speak it?!')
