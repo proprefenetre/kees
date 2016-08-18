@@ -5,35 +5,26 @@ import argparse
 from bs4 import BeautifulSoup 
 from re import sub
 from urllib.request import urlopen, Request
-# import requests
-from requests.exceptions import HTTPError, ConnectionError, SSLError
 from urllib.parse import quote
 
 
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{source}/{target}/{word}'
-LANGUAGES = ['nl', 'NL', 'en', 'EN', 'de', 'DE', 'fr', 'FR', 'es', 'ES']
-
-USER_AGENT = {'User-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) \
-              Gecko/20100101 Firefox/48.0'}
+LANGUAGES = ['NL', 'EN', 'DE', 'FR', 'ES']
 
 TARGET_DIV = '.span8 > div:nth-of-type(1)'
 FONT_STYLE = 'color:navy;font-size:10pt'
 
 
 def _get_response(url):
-    try:
-        # r = requests.get(url, headers=USER_AGENT)
-        # r.encoding = 'utf-8'
-        # return r.text
-        return urlopen(Request(url, headers=USER_AGENT))
-    except (HTTPError, ConnectionError, SSLError) as e:
-        raise e
+    # try
+    return urlopen(url)
+    # TODO: valid errorcatching
+    # except SomeError as e:
+        # raise e
 
 
 def _get_soup(args):
     response = _get_response(SEARCH_URL.format_map(args))
-    # with open('karig.html', 'r') as f:
-        # response = f
     return BeautifulSoup(response, 'lxml')
 
 
@@ -54,6 +45,24 @@ def _get_other_sources(soup):
                                           td.text.split(';')])
     return other_sources
 
+# TODO: simplify 
+def uniek(words):
+    words = [w.split() for w in words]
+    det = []
+    no_det = []
+    for w in words:
+        if len(w) < 2:
+            no_det.append(w)
+        else:
+            det.append(w)
+    
+    for x in no_det:
+        if x[0] not in [v[1] for v in det]:
+            det.append(x[0])
+        else:
+            continue
+    return [' '.join(d) for d in det]
+
 
 def _process(trs):
     result = []
@@ -61,7 +70,7 @@ def _process(trs):
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
         result.append(subbed)
-    return result
+    return uniek(result)
 
 
 def _parse_elements(args):
