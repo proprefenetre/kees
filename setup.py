@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='Kees',
-    version='0.1.2',
+    version='0.1.3',
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
     packages=['src'],
@@ -19,5 +19,6 @@ setup(
     long_description=readme(),
     install_requires=[
         'beautifulsoup4',
+        'lxml'
     ]
 )
