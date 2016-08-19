@@ -75,7 +75,7 @@ def _parse_elements(args):
     return set(translations)
 
 
-def english_motherfucker(args):
+def translate(args):
     args['word'] = quote(' '.join(args['word']).strip())
     args['from'] = args['from'].upper()
     args['target'] = args['target'].upper()
