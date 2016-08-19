@@ -1,3 +1,2 @@
-# The Saurus
-a small cli-app that finds synonyms or antonyms.
-
+# Samuel
+Small app for translating words to or from Dutch, using the online dictionary www.mijnwoordenboek.nl
