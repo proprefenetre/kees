@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='Kees',
-    version='0.1.0',
+    version='0.1.2',
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
     packages=['src'],

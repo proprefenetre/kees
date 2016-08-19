@@ -4,7 +4,7 @@
 import argparse
 import sys
 
-import kees
+from . import kees
 
 
 def get_parser():
