@@ -45,24 +45,18 @@ def _get_other_sources(soup):
                                           td.text.split(';')])
     return other_sources
 
-# TODO: simplify
-def _get_uniques(words):
-    """ remove translation if the same translation occurs with a determiner """
-    words = [w.split() for w in words]
-    det = []
-    no_det = []
-    for w in words:
-        if len(w) < 2:
-            no_det.append(w)
-        else:
-            det.append(w)
-    
-    for x in no_det:
-        if x[0] not in [v[1] for v in det]:
-            det.append(x[0])
-        else:
-            continue
-    return [' '.join(d) for d in det]
+def _remove_dubs(lst):
+    words = [w.split() for w in lst]
+    uniques = []
+    keys = set()
+    for word in words:
+        if len(word) > 1:
+            keys.add(word[-1])
+            uniques.append(word)
+    for word in [w for w in words if len(w) == 1]:
+        if word[0] not in keys:
+            uniques.append(word)
+    return [' '.join(w) for w in uniques]
 
 
 def _process(trs):
@@ -71,7 +65,7 @@ def _process(trs):
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
         result.append(subbed)
-    return _get_uniques(result)
+    return _remove_dubs(result)
 
 
 def _parse_elements(args):
@@ -82,13 +76,17 @@ def _parse_elements(args):
 
 def english_motherfucker(args):
     args['word'] = quote(' '.join(args['word']).strip())
-    args['source'] = 'NL'
+    args['source'] = args['source'].upper()
+    args['target'] = args['target'].upper()
 
     trs = list(_parse_elements(args))
 
-    if not args['target'] in LANGUAGES:
+    if not any([args['target'] in LANGUAGES, args['source'] in LANGUAGES]):
         raise ValueError('{} - {} not available'.format(args['source'],
                                                         args['target']))
+    
+    if not any([args['target'] == 'NL', args['source'] == 'NL']):
+        raise ValueError('Either source or target language should be "NL"')
 
     if args['sort']:
         trs.sort()
