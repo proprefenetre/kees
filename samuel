@@ -8,7 +8,7 @@ from urllib.request import urlopen, Request
 from urllib.parse import quote
 
 
-SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{source}/{target}/{word}'
+SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{from}/{target}/{word}'
 LANGUAGES = ['NL', 'EN', 'DE', 'FR', 'ES']
 
 TARGET_DIV = '.span8 > div:nth-of-type(1)'
