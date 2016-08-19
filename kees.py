@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
 from re import sub
 import sys
 from urllib.request import urlopen
@@ -30,7 +30,7 @@ def _get_soup(args):
 
 
 def _get_translations(soup):
-    div = soup.select(TARGET_DIV + '> font') 
+    div = soup.select(TARGET_DIV + '> font')
     return [word for group in [elem.text.split(',') for elem in div
             if FONT_STYLE in elem['style']] for word in group]
 
@@ -45,6 +45,7 @@ def _get_other_sources(soup):
                     other_sources.extend([w for w in
                                           td.text.split(';')])
     return other_sources
+
 
 def _remove_dubs(lst):
     words = [w.split() for w in lst]
@@ -70,7 +71,7 @@ def _process(trs):
 
 
 def _parse_elements(args):
-    soup = _get_soup(args)   
+    soup = _get_soup(args)
     translations = _process(_get_translations(soup) + _get_other_sources(soup))
     return set(translations)
 
@@ -116,16 +117,19 @@ def get_parser():
     parser.add_argument('-s', '--sort', action='store_true',
                         help='sort translations alphabetically')
     parser.add_argument('-t', '--target', type=str, default='EN',
-                        help='target language (NL, EN, DE, FR, SP; default: EN)')
+                        help='target language (NL, EN, DE, FR, SP;'
+                        'default: EN)')
     parser.add_argument('-f', '--from', type=str, default='NL',
-                        help='source language (NL, EN, DE, FR, SP; default: NL)')
+                        help='source language (NL, EN, DE, FR, SP;'
+                        'default: NL)')
     parser.add_argument('-n', '--num-translations', type=int,
                         help='number of translations')
     return parser
 
-# TODO: turn this into a separate file, 
-# (cf. https://github.com/Antrikshy/ignr.py/)
+
 def run():
+    # TODO: turn this into a separate file,
+    # (cf. https://github.com/Antrikshy/ignr.py/)
     p = get_parser()
     args = vars(p.parse_args())
     try:
@@ -136,5 +140,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-# vim: ft=python
