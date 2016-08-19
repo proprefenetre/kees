@@ -129,7 +129,7 @@ def run():
     p = get_parser()
     args = vars(p.parse_args())
     try:
-        english_motherfucker(args)
+        translate(args)
     except ValueError as e:
         print(e)
         sys.exit(1)
