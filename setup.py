@@ -12,7 +12,7 @@ setup(
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
     packages=['src'],
-    scrips=['bin/kees'],
+    scripts=['bin/kees'],
     url='https://github.com/proprefenetre/kees',
     license='LICENSE.md',
     description='Translate words to or from Dutch',
