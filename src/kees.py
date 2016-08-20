@@ -24,7 +24,10 @@ def _get_response(url):
 
 def _get_soup(args):
     response = _get_response(SEARCH_URL.format_map(args))
-    return BeautifulSoup(response, 'lxml')
+    try:
+        return BeautifulSoup(response, 'lxml')
+    except UserWarning:
+        return BeautifulSoup(response, 'html.parser')
 
 
 def _get_translations(soup):
@@ -107,4 +110,4 @@ def translate(args):
 
 
 if __name__ == "__main__":
-    translate({'word': 'opnieuw', 'target': 'EN', 'from': 'NL'})
+    translate({'word': 'kaas', 'target': 'EN', 'from': 'NL', 'sort':'False'})
