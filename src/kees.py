@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from bs4 import BeautifulSoup
+from bs4 import FeatureNotFound
+
 from re import sub
+
 from urllib.request import urlopen
 from urllib.parse import quote
 
@@ -26,7 +29,7 @@ def _get_soup(args):
     response = _get_response(SEARCH_URL.format_map(args))
     try:
         return BeautifulSoup(response, 'lxml')
-    except UserWarning:
+    except FeatureNotFound:
         return BeautifulSoup(response, 'html.parser')
 
 
@@ -48,7 +51,9 @@ def _get_other_sources(soup):
     return other_sources
 
 
+# TODO: change this: drop the det, keep one
 def _remove_dubs(lst):
+    """ if translation occur twice, prefer the one with a determiner """
     words = [w.split() for w in lst]
     uniques = []
     keys = set()
@@ -87,18 +92,14 @@ def translate(args):
     if not any([args['target'] in LANGUAGES, args['from'] in LANGUAGES]):
         raise ValueError('{} - {} not available'.format(args['source'],
                                                         args['target']))
-        # print('{} - {} not available'.format(args['source'],
-        #                                      args['target']))
-        # sys.exit(1)
 
     if not any([args['target'] == 'NL', args['from'] == 'NL']):
         raise ValueError('Either source or target language should be "NL"')
-        # print('Either source or target language should be "NL"')
-        # sys.exit(1)
 
     if args['sort']:
         trs.sort()
-
+ 
+    # TODO: move this to its own function
     print('{}: ({} translations)'.format(args['word'], len(trs)))
     num = args.get('num_translations', len(trs))
     for idx, word in enumerate(trs):
@@ -107,7 +108,3 @@ def translate(args):
         if idx+1 == num:
             break
     print()
-
-
-if __name__ == "__main__":
-    translate({'word': 'kaas', 'target': 'EN', 'from': 'NL', 'sort':'False'})
