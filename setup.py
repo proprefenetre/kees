@@ -19,5 +19,6 @@ setup(
     long_description=readme(),
     install_requires=[
         'beautifulsoup4',
+        'lxml'
     ]
 )

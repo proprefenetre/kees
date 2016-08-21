@@ -28,10 +28,10 @@ def _get_response(url):
 
 def _get_soup(args):
     response = _get_response(SEARCH_URL.format_map(args))
-    # try:
-    return BeautifulSoup(response, 'lxml')
-    # except FeatureNotFound:
-    #     raise ImportError
+    try:
+        return BeautifulSoup(response, 'lxml')
+    except FeatureNotFound as e:
+        raise ImportError('Please install the lxml module ({})'.format(e))
 
 
 def _get_translations(soup):
