@@ -8,8 +8,8 @@ from . import kees
 
 
 def get_parser():
-    parser = argparse.ArgumentParser(description='English, motherfucker! \
-                                     Do you speak it?!')
+    parser = argparse.ArgumentParser(description='translate words to or from'
+                                     'Dutch')
     parser.add_argument('word', metavar='WORD', type=str, nargs='+',
                         help='word to be translated')
     parser.add_argument('-s', '--sort', action='store_true',
