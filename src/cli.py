@@ -26,13 +26,11 @@ def get_parser():
 
 
 def run():
-    # TODO: turn this into a separate file,
-    # (cf. https://github.com/Antrikshy/ignr.py/)
     p = get_parser()
     args = vars(p.parse_args())
     try:
         kees.translate(args)
-    except ValueError as e:
+    except (ImportError, ValueError) as e:
         print(e)
         sys.exit(1)
 

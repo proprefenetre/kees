@@ -8,29 +8,30 @@ from re import sub
 
 from urllib.request import urlopen
 from urllib.parse import quote
+from urllib.error import HTTPError
 
 
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{from}/{target}/{word}'
 LANGUAGES = ['NL', 'EN', 'DE', 'FR', 'ES']
 
-TARGET_DIV = '.span8 > div:nth-of-type(1)'
 FONT_STYLE = 'color:navy;font-size:10pt'
+# div that contains the 'other sources' translations:
+TARGET_DIV = '.span8 > div:nth-of-type(1)'
 
 
 def _get_response(url):
     try:
         return urlopen(url)
-    # TODO: valid errorcatching
     except:
-        raise
+        raise HTTPError
 
 
 def _get_soup(args):
     response = _get_response(SEARCH_URL.format_map(args))
-    try:
-        return BeautifulSoup(response, 'lxml')
-    except FeatureNotFound:
-        return BeautifulSoup(response, 'html.parser')
+    # try:
+    return BeautifulSoup(response, 'lxml')
+    # except FeatureNotFound:
+    #     raise ImportError
 
 
 def _get_translations(soup):
@@ -50,21 +51,20 @@ def _get_other_sources(soup):
                                           td.text.split(';')])
     return other_sources
 
-
 # TODO: change this: drop the det, keep one
-def _remove_dubs(lst):
-    """ if translation occur twice, prefer the one with a determiner """
-    words = [w.split() for w in lst]
-    uniques = []
-    keys = set()
-    for word in words:
-        if len(word) > 1:
-            keys.add(word[-1])
-            uniques.append(word)
-    for word in [w for w in words if len(w) == 1]:
-        if word[0] not in keys:
-            uniques.append(word)
-    return [' '.join(w) for w in uniques]
+# def _remove_dubs(lst):
+#     """ if translation occur twice, prefer the one with a determiner """
+#     words = [w.split() for w in lst]
+#     uniques = []
+#     keys = set()
+#     for word in words:
+#         if len(word) > 1:
+#             keys.add(word[-1])
+#             uniques.append(word)
+#     for word in [w for w in words if len(w) == 1]:
+#         if word[0] not in keys:
+#             uniques.append(word)
+#     return [' '.join(w) for w in uniques]
 
 
 def _process(trs):
@@ -73,7 +73,8 @@ def _process(trs):
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
         result.append(subbed)
-    return _remove_dubs(result)
+    # return _remove_dubs(result)
+    return result
 
 
 def _parse_elements(args):
@@ -98,7 +99,7 @@ def translate(args):
 
     if args['sort']:
         trs.sort()
- 
+
     # TODO: move this to its own function
     print('{}: ({} translations)'.format(args['word'], len(trs)))
     num = args.get('num_translations', len(trs))
