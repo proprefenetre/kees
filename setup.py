@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='Kees',
-    version='0.1.5',
+    version='0.1.6',
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
     packages=['src'],
@@ -20,5 +20,6 @@ setup(
     install_requires=[
         'beautifulsoup4',
         'lxml'
-    ]
+    ],
+    keywords=['translate', 'translation', 'dictionary', 'Dutch']
 )
