@@ -68,8 +68,8 @@ def _process(trs):
 
 def _parse_elements(args):
     soup = _get_soup(args)
-    translations = _process(_get_translations(soup) +
-                            _get_other_sources(soup))
+    raw_translations = _get_translations(soup) + _get_other_sources(soup)
+    translations = _process(raw_translations)
     return translations
 
 
