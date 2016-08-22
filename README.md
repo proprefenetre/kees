@@ -6,11 +6,11 @@ Kees finds translations or synonyms of Dutch words and delivers them to your com
 
 Install using:
     
-    --pip install kees--
+    pip install kees
 
 ## Usage
 
-    usage: main.py [-h] [-f FROM] [-t TO] [-a] [WORD [WORD ...]]
+    usage: kees [-h] [-f FROM] [-t TO] [-a] [WORD [WORD ...]]
 
     translate words to or from Dutch
 
@@ -25,12 +25,14 @@ Install using:
 
 ## Requirements
 
-- (BeautifulSoup)[https://www.crummy.com/software/BeautifulSoup/]
-- lxml
+- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
+- [lxml](http://lxml.de/)
 
 install using:
 
     $ pip install BeautifulSoup4
+
+and (surprise!): 
 
     $ pip install lxml
 
@@ -38,36 +40,36 @@ install using:
 
 Kees' results may vary. Sometimes you get what you need:
 
-    $ python main.py hond 
+    $ kees hond 
     canine
 
 Other times, not so much:
 
-    $ python main.py hond 
+    $ kees hond 
     dickhead
 
 This is just mean:
 
-    $ python main.py hond 
+    $ kees hond 
     dickhead
 
-    $ python main.py hond
+    $ kees hond
     dickhead
 
-    $ python main.py hond 
+    $ kees hond 
     shit
 
 Seriously:
 
-    $ python main.py hond 
+    $ kees hond 
     dog
 
-    $ python main.py hond 
+    $ kees hond 
     shit
 
 Kees can be unfriendly in multiple languages:
 
-    $ python main.py hond -t fr
+    $ kees hond -t fr
     salop
 
 Such is life. Use at your own risk.
