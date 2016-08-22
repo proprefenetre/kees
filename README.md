@@ -43,34 +43,42 @@ Kees' results may vary. Sometimes you get what you need:
     $ kees hond 
     canine
 
+
 Other times, not so much:
 
     $ kees hond 
     dickhead
+
 
 This is just mean:
 
     $ kees hond 
     dickhead
 
+
     $ kees hond
     dickhead
 
+
     $ kees hond 
     shit
+
 
 Seriously:
 
     $ kees hond 
     dog
 
+
     $ kees hond 
     shit
+
 
 Kees can be unfriendly in multiple languages:
 
     $ kees hond -t fr
     salop
+
 
 Such is life. Use at your own risk.
 
