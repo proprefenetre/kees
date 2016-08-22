@@ -55,28 +55,14 @@ def _get_other_sources(soup):
     return other_sources
 
 
-def _remove_dubs(lst):
-    """ if translation occur twice, prefer the one with a determiner """
-    words = [w.split() for w in lst]
-    uniques = []
-    keys = set()
-    for word in words:
-        if len(word) > 1:
-            keys.add(word[-1])
-            uniques.append(word)
-    for word in [w for w in words if len(w) == 1]:
-        if word[0] not in keys:
-            uniques.append(word)
-    return [' '.join(w) for w in uniques]
-
-
 def _process(trs):
     clean_words = []
     for t in trs:
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
         clean_words.append(subbed)
-        no_dubs = _remove_dubs(clean_words)
+        no_dubs = {w[-1] if len(w) > 1 else w[0] for w in
+                   [w.split() for w in clean_words]}
     return no_dubs
 
 
@@ -84,7 +70,7 @@ def _parse_elements(args):
     soup = _get_soup(args)
     translations = _process(_get_translations(soup) +
                             _get_other_sources(soup))
-    return set(translations)
+    return translations
 
 
 def translate(args):
@@ -104,10 +90,10 @@ def translate(args):
 
     # TODO: move this to its own function
     if args['all'] is True:
-        print('{}: ({} translations)'.format(args['word'], len(translations)))
+        print('{}: {} translations'.format(args['word'], len(translations)))
         translations.sort()
         for word in translations:
-            print(word)
+            print('\t{}'.format(word))
     else:
         print(choice(translations))
 
