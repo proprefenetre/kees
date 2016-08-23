@@ -10,6 +10,8 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from urllib.error import HTTPError
 
+import argparse
+import sys
 
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{from}/{to}/{word}'
 LANGUAGES = ['NL', 'EN', 'DE', 'FR', 'ES']
@@ -98,3 +100,30 @@ def translate(args):
         print(choice(translations))
 
     print()
+
+
+def run():
+    parser = argparse.ArgumentParser(description='translate words to or from'
+                                     ' Dutch')
+    parser.add_argument('word', metavar='WORD', type=str, nargs='*',
+                        help='word to be translated')
+    parser.add_argument('-f', '--from', type=str, default='NL',
+                        help='available languages: NL, EN, DE, FR, SP'
+                        ' (default: NL)')
+    parser.add_argument('-t', '--to', type=str, default='EN',
+                        help='available languages: NL, EN, DE, FR, SP'
+                        ' (default: EN)')
+    parser.add_argument('-a', '--all', action='store_true', help='return all'
+                        ' translations (default 1)')
+
+    args = vars(parser.parse_args())
+
+    if not args['word']:
+        parser.print_help()
+        return
+
+    try:
+        translate(args)
+    except ValueError as e:
+        print(e)
+        sys.exit(1)

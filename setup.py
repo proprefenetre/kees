@@ -8,18 +8,22 @@ def readme():
 
 setup(
     name='Kees',
-    version='0.1.6',
+    version='0.1.8',
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
-    packages=['src'],
-    scripts=['bin/kees'],
+    packages=['kees'],
     url='https://github.com/proprefenetre/kees',
-    license='LICENSE.md',
+    keywords='translate translation dictionary Dutch',
+    license='MIT',
     description='Translate words to or from Dutch',
     long_description=readme(),
     install_requires=[
         'beautifulsoup4',
         'lxml'
     ],
-    keywords=['translate', 'translation', 'dictionary', 'Dutch']
+    entry_points={
+        'console_scripts': [
+            'kees = kees.kees:run',
+        ]
+    }
 )
