@@ -14,7 +14,7 @@ import argparse
 import sys
 
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{from}/{to}/{word}'
-LANGUAGES = ['NL', 'EN', 'DE', 'FR', 'ES']
+LANGUAGES = ['nl', 'en', 'de', 'fr', 'es']
 
 # style attrib of the font tag that contains the translation
 FONT_STYLE = 'color:navy;font-size:10pt'
@@ -25,8 +25,8 @@ to_DIV = '.span8 > div:nth-of-type(1)'
 def _get_response(url):
     try:
         return urlopen(url)
-    except:
-        raise HTTPError
+    except HTTPError:
+        raise
 
 
 def _get_soup(args):
@@ -58,14 +58,12 @@ def _get_other_sources(soup):
 
 
 def _process(trs):
-    clean_words = []
+    clean_words = set()
     for t in trs:
         stripped = t.strip()
         subbed = sub(r'\s+[\(].*[\)]', '', stripped)
-        clean_words.append(subbed)
-        no_dubs = {w[-1] if len(w) > 1 else w[0] for w in
-                   [w.split() for w in clean_words]}
-    return no_dubs
+        clean_words.add(subbed)
+    return clean_words
 
 
 def _parse_elements(args):
@@ -77,29 +75,19 @@ def _parse_elements(args):
 
 def translate(args):
     args['word'] = quote(' '.join(args['word']).strip())
-    args['from'] = args['from'].upper()
-    args['to'] = args['to'].upper()
+    if args['to']:
+        args['from'] = 'nl'
+    elif args['from']:
+        args['to'] = 'nl'
 
-    translations = list(_parse_elements(args))
+    translations = sorted(list(_parse_elements(args)))
 
-    if not any([args['to'] in LANGUAGES, args['from'] in LANGUAGES]):
-        raise ValueError('{} - {} not available'.format(args['source'],
-                                                        args['to']))
-
-    if not any([args['to'] == 'NL', args['from'] == 'NL']):
-        raise ValueError('Error: Either source or to language should be '
-                         '"NL"')
-
-    # TODO: move this to its own function
-    if args['all'] is True:
-        print('{}: {} translations'.format(args['word'], len(translations)))
-        translations.sort()
-        for word in translations:
-            print('\t{}'.format(word))
+    if args['random'] is True:
+        result = choice(translations)
     else:
-        print(choice(translations))
+        result = '\n'.join([w for w in translations])
 
-    print()
+    print('({} - {})\n{}'.format(args['from'], args['to'], result))
 
 
 def run():
@@ -107,14 +95,14 @@ def run():
                                      ' Dutch')
     parser.add_argument('word', metavar='WORD', type=str, nargs='*',
                         help='word to be translated')
-    parser.add_argument('-f', '--from', type=str, default='NL',
-                        help='available languages: NL, EN, DE, FR, SP'
-                        ' (default: NL)')
-    parser.add_argument('-t', '--to', type=str, default='EN',
-                        help='available languages: NL, EN, DE, FR, SP'
-                        ' (default: EN)')
-    parser.add_argument('-a', '--all', action='store_true', help='return all'
-                        ' translations (default 1)')
+    parser.add_argument('-f', '--from', type=str,
+                        help='available languages: nl, en, de, fr, sp'
+                        ' (default: nl)')
+    parser.add_argument('-t', '--to', type=str,
+                        help='available languages: nl, en, de, fr, sp'
+                        ' (default: en)')
+    parser.add_argument('-r', '--random', action='store_true', help='return a'
+                        ' random translation')
 
     args = vars(parser.parse_args())
 
@@ -124,6 +112,6 @@ def run():
 
     try:
         translate(args)
-    except ValueError as e:
+    except (ValueError, IndexError) as e:
         print(e)
         sys.exit(1)
