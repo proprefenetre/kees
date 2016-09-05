@@ -45,9 +45,6 @@ these results are can be illustrated using the --random flag:
     $ kees hond -r
     canine
 
-
-Other times, kees is just rude:
-
     $ kees hond -r
     dickhead
 
@@ -57,13 +54,10 @@ Other times, kees is just rude:
     $ kees hond -r
     shit
 
-
-Kees can also be unfriendly in multiple languages:
+As you can see, Kees can be quite unfriendly. As a matter of fact, Kees can be unfriendly in multiple languages:
 
     $ kees hond -t fr -r
     con
 
     $ kees hond -t de -r
     der Dreckskerl
-
-Use at your own risk!
