@@ -10,7 +10,7 @@ Install using:
 
 ## Usage
 
-    usage: kees [-h] [-f FROM] [-t TO] [-a] [WORD [WORD ...]]
+    usage: main.py [-h] [-f FROM] [-t TO] [-r] [WORD [WORD ...]]
 
     translate words to or from Dutch
 
@@ -19,9 +19,9 @@ Install using:
 
     optional arguments:
       -h, --help            show this help message and exit
-      -f FROM, --from FROM  available languages: NL, EN, DE, FR, SP (default: NL)
-      -t TO, --to TO        available languages: NL, EN, DE, FR, SP (default: EN)
-      -a, --all             return all translations (default 1)
+      -f FROM, --from FROM  available languages: nl, en, de, fr, sp (default: nl)
+      -t TO, --to TO        available languages: nl, en, de, fr, sp (default: en)
+      -r, --random          return a random translation
 
 ## Requirements
 
@@ -38,48 +38,32 @@ and (surprise!):
 
 ## Reliability
 
-Kees' results may vary. Sometimes you get what you need:
+By default, Kees returns a list of all the translations it finds. Sometimes
+this list contains duplicates or unexpected results. Exactly how unexpected
+these results are can be illustrated using the --random flag:
 
-    $ kees hond 
+    $ kees hond -r
     canine
 
 
-Other times, not so much:
+Other times, kees is just rude:
 
-    $ kees hond 
+    $ kees hond -r
     dickhead
 
-
-This is just mean:
-
-    $ kees hond 
-    dickhead
-
-
-    $ kees hond
-    dickhead
-
-
-    $ kees hond 
-    shit
-
-
-Seriously:
-
-    $ kees hond 
+    $ kees hond -r
     dog
 
-
-    $ kees hond 
+    $ kees hond -r
     shit
 
 
-Kees can be unfriendly in multiple languages:
+Kees can also be unfriendly in multiple languages:
 
-    $ kees hond -t fr
-    salop
+    $ kees hond -t fr -r
+    con
 
+    $ kees hond -t de -r
+    der Dreckskerl
 
-Such is life. Use at your own risk.
-
-
+Use at your own risk!

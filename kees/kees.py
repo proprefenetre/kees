@@ -87,7 +87,7 @@ def translate(args):
     else:
         result = '\n'.join([w for w in translations])
 
-    print('({} - {})\n{}'.format(args['from'], args['to'], result))
+    print('{}'.format(result))
 
 
 def run():
@@ -113,5 +113,5 @@ def run():
     try:
         translate(args)
     except (ValueError, IndexError) as e:
-        print(e)
+        print('no translation found')
         sys.exit(1)

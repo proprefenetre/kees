@@ -8,12 +8,12 @@ def readme():
 
 setup(
     name='Kees',
-    version='0.1.8',
+    version='0.1.10',
     author='C. Eigenraam',
     author_email='proprefenetre@gmail.com',
     packages=['kees'],
     url='https://github.com/proprefenetre/kees',
-    keywords='translate translation dictionary Dutch',
+    keywords='thesaurus translate translation dictionary Dutch',
     license='MIT',
     description='Translate words to or from Dutch',
     long_description=readme(),
