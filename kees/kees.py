@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import argparse
+
 from bs4 import BeautifulSoup, FeatureNotFound
 
 from re import sub
+import readline
 from random import choice
 
 from urllib.request import urlopen
 from urllib.parse import quote
 from urllib.error import HTTPError
 
-import argparse
 import sys
 
 SEARCH_URL = 'http://www.mijnwoordenboek.nl/vertaal/{from}/{to}/{word}'
@@ -90,6 +92,27 @@ def translate(args):
     print('{}'.format(result))
 
 
+def interact():
+    args = {}
+    while True:
+        try:
+            text = input("> ")
+        except EOFError:
+            break
+        if not text:
+            continue
+
+        args['word'] = quote(text.strip())
+        args['from'] = None
+        args['to'] = None
+
+        translations = sorted(list(_parse_elements(args)))
+
+        result = '\n'.join([w for w in translations])
+
+        print('{}'.format(result))
+
+
 def run():
     parser = argparse.ArgumentParser(description='translate words to or from'
                                      ' Dutch')
@@ -103,15 +126,19 @@ def run():
                         ' (default: en)')
     parser.add_argument('-r', '--random', action='store_true', help='return a'
                         ' random translation')
+    parser.add_argument('-i', '--interactive', action='store_true', help='run \
+    kees interactively')
 
     args = vars(parser.parse_args())
 
-    if not args['word']:
+    if args['interactive']:
+        interact()
+    elif not args['word']: 
         parser.print_help()
         return
-
-    try:
-        translate(args)
-    except (ValueError, IndexError) as e:
-        print('no translation found')
-        sys.exit(1)
+    else:
+        try:
+            translate(args)
+        except (ValueError, IndexError) as e:
+            print('no translation found')
+            sys.exit(1)
